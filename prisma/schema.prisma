@@ -1,0 +1,264 @@
+// Car Edits — data model
+// SQLite is used for local development so the project runs with zero external
+// setup. Swap `provider` to "postgresql" and DATABASE_URL to a Postgres
+// connection string for production (see README).
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  CUSTOMER
+  PHOTOGRAPHER
+  ADMIN
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  ASSIGNED
+  COMPLETED
+  CANCELLED
+  REJECTED
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID_PARTIAL
+  PAID_FULL
+  REFUNDED
+  FAILED
+}
+
+enum PaymentProvider {
+  RAZORPAY
+  STRIPE
+  UPI
+  CASH
+}
+
+enum LocationType {
+  DEALERSHIP
+  HOME
+  OUTDOOR
+  EVENT_VENUE
+  CUSTOM
+}
+
+enum AddressType {
+  HOME
+  WORK
+  OTHER
+}
+
+enum PackageTier {
+  STANDARD
+  PREMIUM
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String
+  email         String?   @unique
+  phone         String    @unique
+  phoneVerified Boolean   @default(false)
+  role          Role      @default(CUSTOMER)
+  city          String?
+  state         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  bookings        Booking[]     @relation("CustomerBookings")
+  photographerFor Booking[]     @relation("AssignedPhotographer")
+  reviews         Review[]
+  supportTickets  SupportTicket[]
+  wishlist        WishlistItem[]
+}
+
+model Service {
+  id               String   @id @default(cuid())
+  slug             String   @unique
+  name             String
+  tagline          String
+  shortDescription String
+  description      String
+  features         String // JSON-encoded string[]
+  deliverables     String // JSON-encoded string[]
+  duration         String
+  blockMinutes     Int? // null => not slot-based (contact/discuss scheduling)
+  blockMinutesByTier String? // JSON-encoded Partial<Record<PackageTier, number>>
+  pricingByCity    String // JSON-encoded Record<CitySlug, number> — Standard-tier price
+  premiumAddOn     Int? // null => no package tiers (Custom Shoot)
+  schedulingMode   String // "slot" | "contact" | "discuss"
+  featured         Boolean  @default(false)
+  active           Boolean  @default(true)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  bookings Booking[]
+}
+
+model Booking {
+  id            String        @id @default(cuid())
+  bookingRef    String        @unique // human-readable e.g. CE-2026-00123
+  status        BookingStatus @default(PENDING)
+
+  customer      User?    @relation("CustomerBookings", fields: [customerId], references: [id])
+  customerId    String?
+
+  fullName      String
+  phone         String
+  phoneVerified Boolean  @default(false)
+  email         String
+  city          String
+  citySlug      String // pricing lookup key — "kolkata", or "other" for unlisted cities
+  state         String
+  vehicleBrand  String
+  vehicleModel  String
+  notes         String?
+
+  service       Service     @relation(fields: [serviceId], references: [id])
+  serviceId     String
+  packageTier   PackageTier
+  addOns        String      @default("[]") // JSON-encoded string[] of addon keys
+
+  // Null for "contact"/"discuss" scheduling services (Social Media Content, Custom Shoot).
+  startTime     DateTime?
+  endTime       DateTime?
+
+  locationType  LocationType
+
+  // Structured address — populated for HOME/OUTDOOR/EVENT_VENUE/CUSTOM; city/state
+  // above cover DEALERSHIP bookings where only the city matters.
+  flatNo        String?
+  areaStreet    String?
+  landmark      String?
+  pincode       String?
+  addressType   AddressType?
+
+  photographer   User?   @relation("AssignedPhotographer", fields: [photographerId], references: [id])
+  photographerId String?
+
+  subtotal        Int // tier price + add-ons, before GST
+  gstAmount       Int
+  totalAmount     Int
+  advanceAmount   Int
+  paymentStatus   PaymentStatus @default(PENDING)
+
+  couponCode      String?
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  payments Payment[]
+
+  @@index([status])
+  @@index([phone])
+  @@index([startTime])
+}
+
+model Payment {
+  id          String          @id @default(cuid())
+  booking     Booking         @relation(fields: [bookingId], references: [id])
+  bookingId   String
+  provider    PaymentProvider
+  amount      Int
+  status      PaymentStatus
+  providerRef String? // Razorpay/Stripe payment id
+  invoiceUrl  String?
+  createdAt   DateTime        @default(now())
+}
+
+model Coupon {
+  id            String   @id @default(cuid())
+  code          String   @unique
+  percentOff    Int?
+  amountOff     Int?
+  maxUses       Int?
+  usedCount     Int      @default(0)
+  active        Boolean  @default(true)
+  expiresAt     DateTime?
+  createdAt     DateTime @default(now())
+}
+
+model PortfolioItem {
+  id        String   @id @default(cuid())
+  title     String
+  category  String
+  type      String // "photo" | "video"
+  aspect    String // "portrait" | "landscape" | "square"
+  mediaUrl  String?
+  featured  Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model Review {
+  id         String   @id @default(cuid())
+  user       User?    @relation(fields: [userId], references: [id])
+  userId     String?
+  name       String
+  role       String?
+  rating     Int
+  quote      String
+  vehicle    String?
+  videoUrl   String?
+  source     String   @default("SITE") // SITE | GOOGLE
+  approved   Boolean  @default(true)
+  createdAt  DateTime @default(now())
+}
+
+model BlogPost {
+  id         String   @id @default(cuid())
+  slug       String   @unique
+  title      String
+  excerpt    String
+  content    String // markdown/plaintext
+  category   String
+  coverImage String?
+  published  Boolean  @default(true)
+  publishedAt DateTime @default(now())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model ContactMessage {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  phone     String?
+  subject   String?
+  message   String
+  handled   Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model NewsletterSubscriber {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  createdAt DateTime @default(now())
+}
+
+model SupportTicket {
+  id        String   @id @default(cuid())
+  user      User?    @relation(fields: [userId], references: [id])
+  userId    String?
+  subject   String
+  message   String
+  status    String   @default("OPEN") // OPEN | IN_PROGRESS | RESOLVED
+  createdAt DateTime @default(now())
+}
+
+model WishlistItem {
+  id        String   @id @default(cuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  serviceId String
+  createdAt DateTime @default(now())
+
+  @@unique([userId, serviceId])
+}
