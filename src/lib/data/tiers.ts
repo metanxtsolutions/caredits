@@ -24,7 +24,7 @@ export const tiers: TierInfo[] = [
   {
     tier: "PREMIUM",
     label: "Premium",
-    blurb: "The full cinematic package — drone coverage included.",
+    blurb: "The full cinematic package, drone coverage included.",
     features: [
       "Everything in Standard",
       "Drone aerial coverage included",

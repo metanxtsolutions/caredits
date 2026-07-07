@@ -28,7 +28,7 @@ export function CtaSection() {
         <Reveal delay={0.2}>
           <p className="mt-6 max-w-xl text-lg text-white/60">
             Starts from ₹{siteConfig.startingPrice.toLocaleString("en-IN")}. Book online in
-            under two minutes — pick your slot, and we&apos;ll handle the rest.
+            under two minutes. Pick your slot and we&apos;ll handle the rest.
           </p>
         </Reveal>
         <Reveal delay={0.3}>

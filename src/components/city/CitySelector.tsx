@@ -109,7 +109,7 @@ function CityModal({ onClose }: { onClose: () => void }) {
             </div>
           )}
           <p className="mt-3 text-xs text-grey">
-            We serve PAN India — outstation shoots include a travel fee shown at booking.
+            We serve PAN India. Outstation shoots include a travel fee shown at booking.
           </p>
         </div>
       </div>

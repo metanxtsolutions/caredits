@@ -18,7 +18,7 @@ export default function GalleryPage() {
       <PageHero
         eyebrow="Lookbook"
         title="GALLERY"
-        description="A curated look, organised by category — for the full searchable archive, visit the Portfolio page."
+        description="A curated look, organised by category. Visit the Portfolio page for the full searchable archive."
       />
       <div className="bg-ink-deep">
         {portfolioCategories.map((category, i) => {

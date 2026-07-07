@@ -120,7 +120,7 @@ export function StepLocation({ onDealershipSelected }: { onDealershipSelected: (
                 <Lock className="absolute top-1/2 right-3 size-4 -translate-y-1/2 text-grey" />
               </div>
               <span className="mt-1.5 block text-xs text-grey">
-                Matches the city selector above — change it there if needed.
+                Matches the city selector above. Change it there if needed.
               </span>
             </Field>
             <Field label="Pincode">

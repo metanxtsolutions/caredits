@@ -10,7 +10,7 @@ import { siteConfig } from "@/lib/site-config";
 export const metadata: Metadata = {
   title: "Contact",
   description:
-    "Get in touch with Car Edits — WhatsApp, call, or email to discuss your car, bike or dealership shoot.",
+    "Get in touch with Car Edits. WhatsApp, call, or email to discuss your car, bike or dealership shoot.",
 };
 
 export default function ContactPage() {

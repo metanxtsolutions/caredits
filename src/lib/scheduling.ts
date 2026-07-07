@@ -1,6 +1,6 @@
 import type { PackageTier, Service } from "@/lib/data/services";
 
-/** Single shared crew resource — matches "photographer is occupied" business rule. */
+/** Single shared crew resource, matches "photographer is occupied" business rule. */
 export const BUSINESS_START_MIN = 9 * 60; // 9:00 AM
 export const BUSINESS_END_MIN = 19 * 60; // 7:00 PM
 export const SLOT_STEP_MIN = 30;
@@ -38,7 +38,7 @@ function overlaps(aStart: Date, aEnd: Date, bStart: Date, bEnd: Date) {
 
 /**
  * Every candidate start time for a given day + required duration that doesn't
- * overlap an existing booking (single shared crew — no double-booking).
+ * overlap an existing booking (single shared crew, no double-booking).
  */
 export function computeAvailableStarts({
   dayStart,

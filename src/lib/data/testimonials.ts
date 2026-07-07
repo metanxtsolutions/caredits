@@ -27,7 +27,7 @@ export const testimonials: Testimonial[] = [
     name: "Priya Kapoor",
     role: "Content Creator",
     quote:
-      "Booked them for a bike shoot on a whim — ended up being some of the best content on my page this year.",
+      "Booked them for a bike shoot on a whim, ended up being some of the best content on my page this year.",
     rating: 5,
     vehicle: "Bike Delivery Shoot",
   },

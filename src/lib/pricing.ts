@@ -9,7 +9,7 @@ export function getBasePrice(service: Service, citySlug: CitySlug | string): num
   if (citySlug in service.pricingByCity) {
     return service.pricingByCity[citySlug as CitySlug];
   }
-  // Custom/"other" city typed by the user — not in the pricing sheet.
+  // Custom/"other" city typed by the user, not in the pricing sheet.
   return service.pricingByCity.kolkata + OUTSTATION_FALLBACK_FEE;
 }
 

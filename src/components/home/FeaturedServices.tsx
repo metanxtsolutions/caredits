@@ -15,7 +15,7 @@ export function FeaturedServices() {
           <SectionHeading
             eyebrow="What We Do"
             title="SERVICES BUILT FOR EVERY SHOOT"
-            description="From a single delivery reel to a full monthly retainer — pick the coverage that fits."
+            description="From a single delivery reel to a full monthly retainer, pick the coverage that fits."
           />
           <Reveal delay={0.2}>
             <Button href="/services" variant="outline" arrow className="shrink-0">

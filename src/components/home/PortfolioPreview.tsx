@@ -15,7 +15,7 @@ export function PortfolioPreview() {
           <SectionHeading
             eyebrow="Our Work"
             title="A GLIMPSE INTO THE PORTFOLIO"
-            description="Cars, bikes, dealerships, drone films and more — every frame shot on brief."
+            description="Cars, bikes, dealerships, drone films and more. Every frame shot on brief."
           />
           <Reveal delay={0.2}>
             <Button href="/portfolio" variant="outline" arrow className="shrink-0">

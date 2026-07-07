@@ -89,7 +89,7 @@ export function BookingWizard() {
   const ready = canProceed(s.step, s);
   const stepContentRef = useRef<HTMLDivElement>(null);
 
-  // Move focus to the new step's content on every transition — keeps screen
+  // Move focus to the new step's content on every transition. Keeps screen
   // reader / keyboard users oriented without relying on a full page navigation.
   useEffect(() => {
     stepContentRef.current?.focus({ preventScroll: true });

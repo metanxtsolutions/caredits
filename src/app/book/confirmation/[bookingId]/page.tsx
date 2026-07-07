@@ -120,7 +120,7 @@ export default async function BookingConfirmationPage({
           </div>
 
           <p className="mt-6 text-center text-sm text-grey">
-            A confirmation email, SMS and WhatsApp message have been sent to you (in production —
+            A confirmation email, SMS and WhatsApp message have been sent to you (in production;
             this demo environment does not send real messages). Our team will reach out before
             your shoot.
           </p>

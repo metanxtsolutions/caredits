@@ -3,7 +3,7 @@ import { CalendarCheck, Car, Clapperboard } from "lucide-react";
 const steps = [
   { icon: CalendarCheck, title: "You Book", description: "Pick date, time & city" },
   { icon: Car, title: "We Arrive", description: "Our crew reaches your location" },
-  { icon: Clapperboard, title: "We Shoot", description: "Full coverage — you get the content" },
+  { icon: Clapperboard, title: "We Shoot", description: "Full coverage, ready to share" },
 ];
 
 export function HowItWorksMini() {

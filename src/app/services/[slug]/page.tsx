@@ -128,7 +128,7 @@ export default async function ServiceDetailPage({
                           </p>
                           <p>
                             Standard delivery is within 48 hours. Add Express Same-Day Delivery
-                            at checkout, or choose the Luxury package which includes it — see the{" "}
+                            at checkout, or choose the Premium package, which includes it. See the{" "}
                             <a href="/pricing" className="text-accent underline">
                               Pricing page
                             </a>
@@ -142,7 +142,7 @@ export default async function ServiceDetailPage({
                       content: (
                         <ul className="list-disc space-y-2 pl-5 text-sm text-ink/80 marker:text-accent">
                           <li>Have the vehicle cleaned before our crew arrives for best results.</li>
-                          <li>Outdoor and home shoots depend on daylight — we&apos;ll confirm timing in advance.</li>
+                          <li>Outdoor and home shoots depend on daylight. We&apos;ll confirm timing in advance.</li>
                           <li>Reschedule free of charge up to 24 hours before your shoot.</li>
                         </ul>
                       ),

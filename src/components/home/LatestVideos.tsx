@@ -4,9 +4,9 @@ import { PlaceholderMedia } from "@/components/ui/PlaceholderMedia";
 import { Reveal } from "@/components/ui/Reveal";
 
 const videos = [
-  { id: "v1", title: "Delivery Reel — Midnight Sedan" },
-  { id: "v2", title: "Launch Film — The Reveal" },
-  { id: "v3", title: "Road Trip — Coastal Convoy" },
+  { id: "v1", title: "Delivery Reel: Midnight Sedan" },
+  { id: "v2", title: "Launch Film: The Reveal" },
+  { id: "v3", title: "Road Trip: Coastal Convoy" },
 ];
 
 export function LatestVideos() {

@@ -7,7 +7,7 @@ import { CtaSection } from "@/components/home/CtaSection";
 export const metadata: Metadata = {
   title: "Services",
   description:
-    "Car and bike delivery shoots, vehicle launch events, drone cinematography, corporate events and monthly content retainers — professional automotive production across India.",
+    "Car and bike delivery shoots, vehicle launch events, drone cinematography, corporate events and monthly content retainers. Professional automotive production across India.",
 };
 
 export default function ServicesPage() {
@@ -16,7 +16,7 @@ export default function ServicesPage() {
       <PageHero
         eyebrow="What We Do"
         title="SERVICES"
-        description="Seven ways to make your vehicle's story worth sharing — from a single delivery shoot to a full monthly retainer."
+        description="Seven ways to make your vehicle's story worth sharing, from a single delivery shoot to a full monthly retainer."
       />
       <section className="bg-grey-light py-20 md:py-28">
         <Container>

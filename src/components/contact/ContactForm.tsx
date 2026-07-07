@@ -41,7 +41,7 @@ export function ContactForm() {
         <CheckCircle2 className="size-12 text-accent" />
         <h3 className="font-display text-3xl text-ink">MESSAGE SENT</h3>
         <p className="max-w-sm text-grey">
-          Thanks for reaching out — our team will get back to you within 24 hours.
+          Thanks for reaching out. Our team will get back to you within 24 hours.
         </p>
         <Button variant="outline" onClick={() => setSubmitted(false)}>
           Send Another Message
@@ -73,7 +73,7 @@ export function ContactForm() {
           {...register("message")}
           rows={5}
           className="input resize-none"
-          placeholder="Tell us about your shoot — vehicle, location, and preferred dates."
+          placeholder="Tell us about your shoot: vehicle, location, and preferred dates."
         />
       </Field>
 

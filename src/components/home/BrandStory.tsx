@@ -12,7 +12,7 @@ export function BrandStory() {
           <Reveal>
             <PlaceholderMedia
               id="brand-story"
-              label="Behind the scenes — Car Edits crew on location"
+              label="Behind the scenes: Car Edits crew on location"
               className="aspect-[4/3] w-full"
             />
           </Reveal>
@@ -25,13 +25,13 @@ export function BrandStory() {
             <Reveal delay={0.2}>
               <div className="mt-6 space-y-4 text-base leading-relaxed text-grey">
                 <p>
-                  Car Edits started in Kolkata with a simple observation: the most emotional
-                  moment in owning a vehicle — the delivery day — was almost always
+                  Car Edits started in Kolkata with a simple observation. The most emotional
+                  moment in owning a vehicle, the delivery day, was almost always
                   undocumented beyond a shaky phone video.
                 </p>
                 <p>
                   Today we work with individual owners, dealerships, automotive brands and car
-                  clubs across India, bringing a cinematic, editorial eye to every shoot —
+                  clubs across India, bringing a cinematic, editorial eye to every shoot,
                   whether it&apos;s a single delivery or a full monthly content retainer.
                 </p>
               </div>

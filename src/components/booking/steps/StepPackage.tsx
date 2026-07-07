@@ -24,7 +24,7 @@ export function StepPackage() {
         <div className="mt-8 bg-grey-light p-8 text-center">
           <p className="font-display text-3xl text-ink">CUSTOM QUOTE</p>
           <p className="mt-3 text-grey">
-            {service.name} is scoped to your brief — no fixed tiers. We&apos;ll confirm final
+            {service.name} is scoped to your brief with no fixed tiers. We&apos;ll confirm final
             pricing after discussing your requirements in the next steps.
           </p>
         </div>

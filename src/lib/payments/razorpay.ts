@@ -1,7 +1,7 @@
 /**
  * Razorpay integration scaffold.
  *
- * Drop in RAZORPAY_KEY_ID / RAZORPAY_KEY_SECRET in .env to go live — until then,
+ * Drop in RAZORPAY_KEY_ID / RAZORPAY_KEY_SECRET in .env to go live. Until then,
  * `isLiveConfigured()` is false and the booking flow falls back to a clearly-labeled
  * sandbox flow that simulates a successful payment without calling any external API.
  */

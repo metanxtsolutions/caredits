@@ -27,12 +27,12 @@ export const faqs = [
   {
     question: "What locations can you shoot at?",
     answer:
-      "Dealership, home delivery, an outdoor location of your choice, an event venue, or any custom location you specify — just select it during booking.",
+      "Dealership, home delivery, an outdoor location of your choice, an event venue, or any custom location you specify. Just select it during booking.",
   },
   {
     question: "How long until I receive my edited content?",
     answer:
-      "Standard delivery is within 48 hours. Premium includes 24-hour turnaround, and Luxury includes same-day express delivery.",
+      "Standard delivery is within 48 hours. Premium includes a 24-hour turnaround as standard.",
   },
   {
     question: "Do you offer monthly content packages?",

@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 const values = [
   {
     title: "Cinematic First",
-    description: "Every shoot is treated like a film set — lighting, motion and pacing matter as much as the vehicle.",
+    description: "Every shoot is treated like a film set. Lighting, motion and pacing matter as much as the vehicle.",
   },
   {
     title: "Speed Matters",
@@ -49,8 +49,8 @@ export default function AboutPage() {
               <Reveal delay={0.15}>
                 <div className="mt-6 space-y-4 text-base leading-relaxed text-grey">
                   <p>
-                    Car Edits was founded on a simple idea: the delivery moment — the single most
-                    emotional touchpoint in owning a vehicle — deserved better than a shaky phone
+                    Car Edits was founded on a simple idea. The delivery moment, the single most
+                    emotional touchpoint in owning a vehicle, deserved better than a shaky phone
                     video.
                   </p>
                   <p>

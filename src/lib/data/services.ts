@@ -23,7 +23,7 @@ export type Service = {
   duration: string;
   /** Minutes auto-blocked on the crew calendar from the chosen start time. Null when not slot-based. */
   blockMinutes: number | null;
-  /** Per-tier override — only Vehicle Launch Event uses this (half day vs full day). */
+  /** Per-tier override, only Vehicle Launch Event uses this (half day vs full day). */
   blockMinutesByTier?: Partial<Record<PackageTier, number>>;
   /** Standard-tier price per city. Premium = price + premiumAddOn. */
   pricingByCity: Record<CitySlug, number>;
@@ -41,7 +41,7 @@ export const services: Service[] = [
     tagline: "Make Every Bike Look Epic",
     shortDescription: "Dynamic photography and reels for motorcycle deliveries and showroom handovers.",
     description:
-      "Two wheels deserve the same cinematic treatment as four. We shoot bike deliveries with a focus on motion, detail, and the emotion of the handover — perfect for dealership feeds and rider communities alike.",
+      "Two wheels deserve the same cinematic treatment as four. We shoot bike deliveries with a focus on motion, detail, and the emotion of the handover, perfect for dealership feeds and rider communities alike.",
     features: [
       "Low-angle dynamic photography",
       "Slow-motion detail shots",
@@ -72,7 +72,7 @@ export const services: Service[] = [
     tagline: "Make Every Delivery Memorable",
     shortDescription: "Cinematic photo & video coverage the moment your customer takes ownership.",
     description:
-      "Your customer's delivery day is the single most shareable moment in their ownership journey. We capture it with cinematic photography and walkaround video so it becomes content worth posting — and a reel your dealership can reuse for months.",
+      "Your customer's delivery day is the single most shareable moment in their ownership journey. We capture it with cinematic photography and walkaround video, so it becomes content worth posting and a reel your dealership can reuse for months.",
     features: [
       "Cinematic walkaround video",
       "Ribbon & key handover coverage",
@@ -104,7 +104,7 @@ export const services: Service[] = [
     tagline: "Launch Your Vehicle In Style",
     shortDescription: "Full-scale cinematic coverage for new model launches and reveal events.",
     description:
-      "A launch is a brand moment — we treat it like one. Multi-camera coverage, drone establishing shots, and a same-week hero film that captures the reveal, the crowd, and every angle of the vehicle itself.",
+      "A launch is a brand moment, and we treat it like one. Multi-camera coverage, drone establishing shots, and a same-week hero film that captures the reveal, the crowd, and every angle of the vehicle itself.",
     features: [
       "Multi-camera event coverage",
       "Drone establishing shots",
@@ -167,7 +167,7 @@ export const services: Service[] = [
     tagline: "Every Detail, Documented",
     shortDescription: "Coverage for automotive brand corporate events and conferences.",
     description:
-      "From dealer conferences to internal brand events — professional photo and video coverage that captures the program, the people, and the moments worth reusing in internal and external comms.",
+      "From dealer conferences to internal brand events, professional photo and video coverage that captures the program, the people, and the moments worth reusing in internal and external comms.",
     features: [
       "Full-day event coverage",
       "Speaker & session photography",
@@ -197,7 +197,7 @@ export const services: Service[] = [
     tagline: "A Full Month, Handled",
     shortDescription: "Monthly content retainers for dealerships, brands, and creators.",
     description:
-      "Consistent content is what actually grows a following. Our monthly packages bundle shoot days, editing, and delivery on a schedule — so your feed never goes quiet.",
+      "Consistent content is what actually grows a following. Our monthly packages bundle shoot days, editing, and delivery on a schedule, so your feed never goes quiet.",
     features: [
       "Monthly shoot day scheduling",
       "Reels, photos & stories bundle",
@@ -227,7 +227,7 @@ export const services: Service[] = [
     tagline: "Tell Us What You're Building",
     shortDescription: "A tailored production for briefs that don't fit a standard package.",
     description:
-      "Modification showcases, product launches, influencer collaborations, or anything in between — tell us the brief and we'll scope a crew, timeline, and deliverables to match.",
+      "Modification showcases, product launches, influencer collaborations, or anything in between. Tell us the brief and we'll scope a crew, timeline, and deliverables to match.",
     features: [
       "Custom crew & equipment scoping",
       "Flexible locations & timing",
@@ -257,7 +257,7 @@ export function getServiceBySlug(slug: string) {
   return services.find((s) => s.slug === slug);
 }
 
-/** Sheet prices are already "including 30% discount" — derive the pre-discount price for the strikethrough. */
+/** Sheet prices are already "including 30% discount"; derive the pre-discount price for the strikethrough. */
 export function getDiscountPricing(price: number) {
   const originalPrice = Math.round(price / 0.7 / 100) * 100;
   const percentOff = Math.round(((originalPrice - price) / originalPrice) * 100);

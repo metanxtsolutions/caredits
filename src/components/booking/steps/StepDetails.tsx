@@ -85,7 +85,7 @@ export function StepDetails() {
           <div className="mt-3 bg-grey-light p-4">
             <p className="flex items-center gap-2 text-xs text-grey">
               <ShieldCheck className="size-4 shrink-0 text-accent" />
-              Sandbox mode — no real SMS is sent. Demo OTP:{" "}
+              Sandbox mode. No real SMS is sent. Demo OTP:{" "}
               <span className="font-bold text-ink">{DEMO_OTP}</span>
             </p>
             <div className="mt-3 flex gap-2">
