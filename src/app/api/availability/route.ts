@@ -29,13 +29,19 @@ export async function GET(request: Request) {
   const dayEnd = new Date(dayStart);
   dayEnd.setDate(dayEnd.getDate() + 1);
 
-  const existingBookings = await prisma.booking.findMany({
-    where: {
-      startTime: { gte: dayStart, lt: dayEnd },
-      status: { notIn: ["CANCELLED", "REJECTED"] },
-    },
-    select: { startTime: true, endTime: true },
-  });
+  const [existingBookings, blockedSlots] = await Promise.all([
+    prisma.booking.findMany({
+      where: {
+        startTime: { gte: dayStart, lt: dayEnd },
+        status: { notIn: ["CANCELLED", "REJECTED"] },
+      },
+      select: { startTime: true, endTime: true },
+    }),
+    prisma.blockedSlot.findMany({
+      where: { date: { gte: dayStart, lt: dayEnd } },
+      select: { startMinutes: true, endMinutes: true },
+    }),
+  ]);
 
   const starts = computeAvailableStarts({
     dayStart,
@@ -45,6 +51,7 @@ export async function GET(request: Request) {
       endTime: Date;
     }[],
     now: new Date(),
+    blockedRanges: blockedSlots,
   });
 
   return NextResponse.json({ starts, schedulingMode: service.schedulingMode });

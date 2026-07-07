@@ -65,7 +65,7 @@ model User {
   id            String    @id @default(cuid())
   name          String
   email         String?   @unique
-  phone         String    @unique
+  phone         String?   @unique
   phoneVerified Boolean   @default(false)
   role          Role      @default(CUSTOMER)
   city          String?
@@ -101,6 +101,7 @@ model Service {
   updatedAt        DateTime @updatedAt
 
   bookings Booking[]
+  wishlistedBy WishlistItem[]
 }
 
 model Booking {
@@ -160,6 +161,17 @@ model Booking {
   @@index([status])
   @@index([phone])
   @@index([startTime])
+}
+
+model BlockedSlot {
+  id           String   @id @default(cuid())
+  date         DateTime // day being blocked (time component ignored)
+  startMinutes Int? // null + endMinutes null => whole day blocked
+  endMinutes   Int?
+  reason       String?
+  createdAt    DateTime @default(now())
+
+  @@index([date])
 }
 
 model Payment {
@@ -257,6 +269,7 @@ model WishlistItem {
   id        String   @id @default(cuid())
   user      User     @relation(fields: [userId], references: [id])
   userId    String
+  service   Service  @relation(fields: [serviceId], references: [id])
   serviceId String
   createdAt DateTime @default(now())
 

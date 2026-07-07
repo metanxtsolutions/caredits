@@ -2,17 +2,26 @@
 
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
-import { Menu, X } from "lucide-react";
+import { Menu, X, User } from "lucide-react";
 import { Logo } from "@/components/ui/Logo";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { siteConfig } from "@/lib/site-config";
 import { cn } from "@/lib/utils";
 
+type NavUser = { role: "CUSTOMER" | "PHOTOGRAPHER" | "ADMIN" } | null;
+
+// Pages with no dark hero behind the header — the transparent/light-logo header
+// would be invisible against their white background, so keep the header solid here.
+const NO_HERO_PREFIXES = ["/book", "/login", "/dashboard", "/admin"];
+
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const [user, setUser] = useState<NavUser>(null);
   const pathname = usePathname();
+  const noHero = NO_HERO_PREFIXES.some((p) => pathname.startsWith(p));
+  const onBookingFlow = pathname.startsWith("/book");
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -23,7 +32,14 @@ export function Navbar() {
 
   useEffect(() => setOpen(false), [pathname]);
 
-  const solid = scrolled || open;
+  useEffect(() => {
+    fetch("/api/auth/session")
+      .then((res) => res.json())
+      .then((data) => setUser(data.user))
+      .catch(() => setUser(null));
+  }, [pathname]);
+
+  const solid = scrolled || open || noHero;
 
   return (
     <header
@@ -49,9 +65,18 @@ export function Navbar() {
           </nav>
 
           <div className="hidden items-center gap-4 xl:flex">
-            <Button href="/book" size="md" variant="primary" arrow className="px-6 py-3.5 text-xs">
-              Book Your Shoot
-            </Button>
+            <a
+              href={user ? (user.role === "ADMIN" ? "/admin" : "/dashboard") : "/login"}
+              className="flex items-center gap-1.5 font-label text-xs font-semibold uppercase tracked-tight text-white/70 transition-colors hover:text-white"
+            >
+              <User className="size-3.5" />
+              {user ? (user.role === "ADMIN" ? "Admin" : "My Account") : "Login"}
+            </a>
+            {!onBookingFlow && (
+              <Button href="/book" size="md" variant="primary" arrow className="px-6 py-3.5 text-xs">
+                Book Your Shoot
+              </Button>
+            )}
           </div>
 
           <button
@@ -77,9 +102,17 @@ export function Navbar() {
                   {item.label}
                 </a>
               ))}
-              <Button href="/book" size="md" variant="primary" arrow className="mt-4 w-full">
-                Book Your Shoot
-              </Button>
+              <a
+                href={user ? (user.role === "ADMIN" ? "/admin" : "/dashboard") : "/login"}
+                className="font-label py-3 text-sm font-semibold uppercase tracked-tight text-white/80 hover:text-white"
+              >
+                {user ? (user.role === "ADMIN" ? "Admin" : "My Account") : "Login"}
+              </a>
+              {!onBookingFlow && (
+                <Button href="/book" size="md" variant="primary" arrow className="mt-4 w-full">
+                  Book Your Shoot
+                </Button>
+              )}
             </nav>
           </Container>
         </div>

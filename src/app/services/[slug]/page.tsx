@@ -11,6 +11,7 @@ import { ServiceCard } from "@/components/services/ServiceCard";
 import { ServicePriceBlock } from "@/components/services/ServicePriceBlock";
 import { HowItWorksMini } from "@/components/services/HowItWorksMini";
 import { StickyBookBar } from "@/components/services/StickyBookBar";
+import { WishlistButton } from "@/components/dashboard/WishlistButton";
 import { CitySelector } from "@/components/city/CitySelector";
 import { services, getServiceBySlug } from "@/lib/data/services";
 import { faqs } from "@/lib/data/faqs";
@@ -81,7 +82,10 @@ export default async function ServiceDetailPage({
               </Reveal>
 
               <Reveal delay={0.1}>
-                <h2 className="font-display mt-10 text-4xl text-ink">{service.name}</h2>
+                <div className="mt-10 flex items-start justify-between gap-4">
+                  <h2 className="font-display text-4xl text-ink">{service.name}</h2>
+                  <WishlistButton serviceSlug={service.slug} />
+                </div>
                 <p className="mt-4 text-base leading-relaxed text-grey">{service.description}</p>
               </Reveal>
 

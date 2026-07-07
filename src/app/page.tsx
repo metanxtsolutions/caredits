@@ -12,6 +12,8 @@ import { Stats } from "@/components/home/Stats";
 import { FaqPreview } from "@/components/home/FaqPreview";
 import { CtaSection } from "@/components/home/CtaSection";
 
+export const revalidate = 60;
+
 export default function Home() {
   return (
     <>

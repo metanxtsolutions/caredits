@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
 import { PlaceholderMedia } from "@/components/ui/PlaceholderMedia";
-import type { PortfolioItem } from "@/lib/data/portfolio";
+import type { PortfolioGridItem } from "@/components/portfolio/PortfolioGrid";
 
 export function Lightbox({
   item,
@@ -11,7 +11,7 @@ export function Lightbox({
   onPrev,
   onNext,
 }: {
-  item: PortfolioItem;
+  item: PortfolioGridItem;
   onClose: () => void;
   onPrev: () => void;
   onNext: () => void;
@@ -60,7 +60,7 @@ export function Lightbox({
       >
         <PlaceholderMedia
           id={item.id}
-          type={item.type}
+          type={item.type as "photo" | "video"}
           className="aspect-video w-full"
         />
         <div className="mt-4 flex items-center justify-between text-white">
