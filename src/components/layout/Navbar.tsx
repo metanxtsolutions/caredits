@@ -34,7 +34,7 @@ export function Navbar() {
     >
       <Container>
         <div className="flex h-20 items-center justify-between">
-          <Logo variant="light" height={22} />
+          <Logo variant="light" height={27} />
 
           <nav className="hidden items-center gap-5 xl:flex">
             {siteConfig.nav.map((item) => (
