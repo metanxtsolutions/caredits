@@ -1,14 +1,13 @@
 // Car Edits — data model
-// SQLite is used for local development so the project runs with zero external
-// setup. Swap `provider` to "postgresql" and DATABASE_URL to a Postgres
-// connection string for production (see README).
+// Postgres-backed. Local dev can point DATABASE_URL at the bundled
+// docker-compose Postgres container or any reachable Postgres instance.
 
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 

@@ -6,7 +6,7 @@ Premium automotive photography & cinematic video production platform — marketi
 
 - **Framework:** Next.js 16 (App Router, TypeScript, Turbopack)
 - **Styling:** Tailwind CSS v4, `next/font` (Bebas Neue / Montserrat / Inter)
-- **Database:** Prisma ORM + SQLite (dev) — swap to Postgres for production, see below
+- **Database:** Prisma ORM + Postgres (see docker-compose.yml for a local instance, or point at any Postgres provider)
 - **State:** Zustand (booking wizard), React Hook Form + Zod (forms/validation)
 - **Animation:** Framer Motion
 - **Icons:** lucide-react (+ hand-rolled SVGs for brand/social icons lucide no longer ships)
@@ -14,15 +14,16 @@ Premium automotive photography & cinematic video production platform — marketi
 ## Getting Started
 
 ```bash
+docker compose up -d db  # starts a local Postgres container on :5432
 npm install
-npx prisma migrate dev   # creates prisma/dev.db and applies the schema
+npx prisma db push       # applies the schema (no migration history yet)
 npm run db:seed          # seeds services, packages, portfolio, reviews, blog posts, time slots
 npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000).
 
-Copy `.env.example` to `.env` if you need to override anything — the defaults (SQLite, sandbox payments) work with zero configuration.
+Copy `.env.example` to `.env` and set `DATABASE_URL` to your Postgres instance (the bundled docker-compose one is `postgresql://caredits:caredits@localhost:5432/caredits`) — sandbox payments work with zero further configuration.
 
 ## What's Built (Phase 1)
 
@@ -68,23 +69,13 @@ src/
   store/booking-store.ts # zustand wizard state
 ```
 
-## Switching to Postgres for Production
-
-1. In `prisma/schema.prisma`, change the datasource:
-   ```prisma
-   datasource db {
-     provider = "postgresql"
-     url      = env("DATABASE_URL")
-   }
-   ```
-2. Set `DATABASE_URL` to your Postgres connection string.
-3. Run `npx prisma migrate deploy`.
-
 ## Deployment
 
-**Vercel:** push to a Git repo and import into Vercel. Add your production `DATABASE_URL` (Postgres — Vercel Postgres, Neon, Supabase all work) and any payment/notification env vars, then deploy.
+Set `DATABASE_URL` to a reachable Postgres instance (Neon, Supabase, Vercel Postgres, Hostinger, etc.) as an environment variable on your host — the `build` script runs `prisma db push` automatically before `next build`, so the schema syncs on every deploy with no manual migration step. Also set `NEXTAUTH_SECRET` (any random string) for login sessions to work.
 
-**Docker:** `docker compose up --build` starts the app plus a Postgres container (see `docker-compose.yml`). Note: switch the Prisma datasource to `postgresql` first (see above) — the compose file wires `DATABASE_URL` to the bundled Postgres service.
+**Vercel:** push to a Git repo and import into Vercel. Add `DATABASE_URL`, `NEXTAUTH_SECRET`, and any payment/notification env vars, then deploy.
+
+**Docker:** `docker compose up --build` starts the app plus a Postgres container (see `docker-compose.yml`), which already wires `DATABASE_URL` for you.
 
 ## Brand System
 
