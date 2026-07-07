@@ -4,7 +4,10 @@ import { Container } from "@/components/ui/Container";
 import { PlaceholderMedia } from "@/components/ui/PlaceholderMedia";
 import { Reveal } from "@/components/ui/Reveal";
 import { Button } from "@/components/ui/Button";
-import { portfolioCategories, portfolioItems } from "@/lib/data/portfolio";
+import { portfolioCategories } from "@/lib/data/portfolio";
+import { prisma } from "@/lib/prisma";
+
+export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: "Gallery",
@@ -12,7 +15,9 @@ export const metadata: Metadata = {
     "A curated visual gallery of Car Edits' cinematic automotive photography and video production, organised by category.",
 };
 
-export default function GalleryPage() {
+export default async function GalleryPage() {
+  const portfolioItems = await prisma.portfolioItem.findMany({ orderBy: { createdAt: "desc" } });
+
   return (
     <>
       <PageHero
@@ -43,7 +48,7 @@ export default function GalleryPage() {
                     <PlaceholderMedia
                       key={item.id}
                       id={item.id}
-                      type={item.type}
+                      type={item.type as "photo" | "video"}
                       label={item.title}
                       className="aspect-[4/3] w-72 shrink-0 md:w-80"
                     />

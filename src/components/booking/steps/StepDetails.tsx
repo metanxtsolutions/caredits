@@ -4,8 +4,7 @@ import { useState } from "react";
 import { ShieldCheck, CheckCircle2 } from "lucide-react";
 import { useBookingStore } from "@/store/booking-store";
 import { Button } from "@/components/ui/Button";
-
-const DEMO_OTP = "123456";
+import { DEMO_OTP } from "@/lib/otp";
 
 export function StepDetails() {
   const s = useBookingStore();

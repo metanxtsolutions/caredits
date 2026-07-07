@@ -1,13 +1,14 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { isLiveConfigured } from "@/lib/payments/razorpay";
+import { notifyPaymentReceived } from "@/lib/notifications";
 
 export async function POST(
   request: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
   const { id } = await params;
-  const booking = await prisma.booking.findUnique({ where: { id } });
+  const booking = await prisma.booking.findUnique({ where: { id }, include: { service: true } });
 
   if (!booking) {
     return NextResponse.json({ error: "Booking not found" }, { status: 404 });
@@ -38,6 +39,16 @@ export async function POST(
       status: "CONFIRMED",
     },
   });
+
+  notifyPaymentReceived({
+    fullName: booking.fullName,
+    phone: booking.phone,
+    email: booking.email,
+    bookingRef: booking.bookingRef,
+    serviceName: booking.service.name,
+    startTime: booking.startTime,
+    amount,
+  }).catch((err) => console.error("Payment notification failed:", err));
 
   return NextResponse.json({ success: true, paymentId: payment.id, live });
 }

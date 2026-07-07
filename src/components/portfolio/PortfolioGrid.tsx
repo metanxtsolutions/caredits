@@ -4,21 +4,29 @@ import { useMemo, useState } from "react";
 import { Search } from "lucide-react";
 import { PlaceholderMedia } from "@/components/ui/PlaceholderMedia";
 import { Lightbox } from "@/components/portfolio/Lightbox";
-import { portfolioCategories, portfolioItems, type PortfolioCategory } from "@/lib/data/portfolio";
+import { portfolioCategories } from "@/lib/data/portfolio";
 import { cn } from "@/lib/utils";
 
-export function PortfolioGrid() {
-  const [category, setCategory] = useState<PortfolioCategory | "All">("All");
+export type PortfolioGridItem = {
+  id: string;
+  title: string;
+  category: string;
+  type: string;
+  aspect: string;
+};
+
+export function PortfolioGrid({ items }: { items: PortfolioGridItem[] }) {
+  const [category, setCategory] = useState<string>("All");
   const [query, setQuery] = useState("");
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
   const filtered = useMemo(() => {
-    return portfolioItems.filter((item) => {
+    return items.filter((item) => {
       const matchesCategory = category === "All" || item.category === category;
       const matchesQuery = item.title.toLowerCase().includes(query.toLowerCase());
       return matchesCategory && matchesQuery;
     });
-  }, [category, query]);
+  }, [items, category, query]);
 
   const activeItem = activeIndex !== null ? filtered[activeIndex] : null;
 
@@ -68,7 +76,7 @@ export function PortfolioGrid() {
             >
               <PlaceholderMedia
                 id={item.id}
-                type={item.type}
+                type={item.type as "photo" | "video"}
                 label={item.title}
                 className="h-full w-full transition-transform duration-500 group-hover:scale-[1.02]"
               />

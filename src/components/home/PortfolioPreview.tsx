@@ -3,11 +3,14 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import { PlaceholderMedia } from "@/components/ui/PlaceholderMedia";
 import { Reveal } from "@/components/ui/Reveal";
 import { Button } from "@/components/ui/Button";
-import { portfolioItems } from "@/lib/data/portfolio";
+import { prisma } from "@/lib/prisma";
 
-const preview = portfolioItems.slice(0, 7);
+export async function PortfolioPreview() {
+  const preview = await prisma.portfolioItem.findMany({
+    orderBy: [{ featured: "desc" }, { createdAt: "desc" }],
+    take: 7,
+  });
 
-export function PortfolioPreview() {
   return (
     <section className="bg-white py-24 md:py-32">
       <Container>
@@ -36,7 +39,7 @@ export function PortfolioPreview() {
               <Reveal key={item.id} delay={0.04 * i} className={spanClass}>
                 <PlaceholderMedia
                   id={item.id}
-                  type={item.type}
+                  type={item.type as "photo" | "video"}
                   label={item.title}
                   className="h-full min-h-[140px] w-full"
                 />

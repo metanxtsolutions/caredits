@@ -6,8 +6,11 @@ import { getServiceBySlug } from "@/lib/data/services";
 import { computeBookingTotal } from "@/lib/pricing";
 import { fromDateKey } from "@/lib/date";
 import { getBlockMinutes, isStartTimeAvailable } from "@/lib/scheduling";
+import { getSession } from "@/lib/auth";
+import { notifyBookingConfirmed } from "@/lib/notifications";
 
 export async function POST(request: Request) {
+  const session = await getSession();
   const body = await request.json();
   const parsed = bookingSchema.safeParse(body);
 
@@ -71,6 +74,11 @@ export async function POST(request: Request) {
           select: { startTime: true, endTime: true },
         });
 
+        const blockedSlots = await tx.blockedSlot.findMany({
+          where: { date: { gte: dayStart, lt: dayEnd } },
+          select: { startMinutes: true, endMinutes: true },
+        });
+
         const stillAvailable = isStartTimeAvailable({
           dayStart,
           startMinutes: data.startMinutes!,
@@ -80,6 +88,7 @@ export async function POST(request: Request) {
             endTime: Date;
           }[],
           now: new Date(),
+          blockedRanges: blockedSlots,
         });
 
         if (!stillAvailable) {
@@ -97,6 +106,7 @@ export async function POST(request: Request) {
       return tx.booking.create({
         data: {
           bookingRef,
+          customerId: session?.id,
           fullName: data.fullName,
           phone: data.phone,
           phoneVerified: Boolean(data.phoneVerified),
@@ -125,6 +135,15 @@ export async function POST(request: Request) {
         },
       });
     });
+
+    notifyBookingConfirmed({
+      fullName: booking.fullName,
+      phone: booking.phone,
+      email: booking.email,
+      bookingRef: booking.bookingRef,
+      serviceName: service.name,
+      startTime: booking.startTime,
+    }).catch((err) => console.error("Booking confirmation notification failed:", err));
 
     return NextResponse.json(
       {

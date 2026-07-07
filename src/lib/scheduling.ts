@@ -31,26 +31,44 @@ export function labelToMinutes(label: string) {
 }
 
 type ExistingBooking = { startTime: Date; endTime: Date };
+export type BlockedRange = { startMinutes: number | null; endMinutes: number | null };
 
 function overlaps(aStart: Date, aEnd: Date, bStart: Date, bEnd: Date) {
   return aStart < bEnd && bStart < aEnd;
 }
 
+/** A blocked range with null start/end means the whole day is blocked. */
+function isWholeDayBlocked(blockedRanges: BlockedRange[]) {
+  return blockedRanges.some((r) => r.startMinutes == null && r.endMinutes == null);
+}
+
+function overlapsBlockedRange(startMin: number, endMin: number, blockedRanges: BlockedRange[]) {
+  return blockedRanges.some((r) => {
+    if (r.startMinutes == null || r.endMinutes == null) return true; // whole day
+    return startMin < r.endMinutes && r.startMinutes < endMin;
+  });
+}
+
 /**
  * Every candidate start time for a given day + required duration that doesn't
- * overlap an existing booking (single shared crew, no double-booking).
+ * overlap an existing booking (single shared crew, no double-booking) or an
+ * admin-defined blocked range.
  */
 export function computeAvailableStarts({
   dayStart,
   blockMinutes,
   existingBookings,
   now,
+  blockedRanges = [],
 }: {
   dayStart: Date;
   blockMinutes: number;
   existingBookings: ExistingBooking[];
   now: Date;
+  blockedRanges?: BlockedRange[];
 }) {
+  if (isWholeDayBlocked(blockedRanges)) return [];
+
   const isToday = dayStart.toDateString() === now.toDateString();
   const nowMinutes = now.getHours() * 60 + now.getMinutes();
 
@@ -62,6 +80,7 @@ export function computeAvailableStarts({
     startMin += SLOT_STEP_MIN
   ) {
     if (isToday && startMin - nowMinutes < LEAD_TIME_MIN) continue;
+    if (overlapsBlockedRange(startMin, startMin + blockMinutes, blockedRanges)) continue;
 
     const candidateStart = new Date(dayStart);
     candidateStart.setMinutes(startMin);
@@ -90,13 +109,18 @@ export function isStartTimeAvailable({
   blockMinutes,
   existingBookings,
   now,
+  blockedRanges = [],
 }: {
   dayStart: Date;
   startMinutes: number;
   blockMinutes: number;
   existingBookings: ExistingBooking[];
   now: Date;
+  blockedRanges?: BlockedRange[];
 }) {
+  if (isWholeDayBlocked(blockedRanges)) return false;
+  if (overlapsBlockedRange(startMinutes, startMinutes + blockMinutes, blockedRanges)) return false;
+
   const candidateStart = new Date(dayStart);
   candidateStart.setMinutes(startMinutes);
   const candidateEnd = new Date(candidateStart);
