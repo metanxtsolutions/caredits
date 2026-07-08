@@ -50,12 +50,6 @@ export const testimonials: Testimonial[] = [
 ];
 
 export const brandsWorkedWith = [
-  "Premium Motors",
-  "Horizon Auto Group",
-  "Eastern Wheels",
-  "Metro Dealership Network",
-  "Velocity Bikes",
-  "Kolkata Car Club",
   "MG",
   "BYD",
   "Jaguar Land Rover",
