@@ -4,6 +4,7 @@ import { bookingSchema } from "@/lib/validations/booking";
 import { generateBookingRef } from "@/lib/booking-ref";
 import { getServiceBySlug } from "@/lib/data/services";
 import { computeBookingTotal } from "@/lib/pricing";
+import { checkCoupon } from "@/lib/coupons";
 import { fromDateKey } from "@/lib/date";
 import { getBlockMinutes, isStartTimeAvailable } from "@/lib/scheduling";
 import { getSession } from "@/lib/auth";
@@ -25,15 +26,13 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Invalid service" }, { status: 400 });
   }
 
-  const pricing = computeBookingTotal({
+  const preDiscountPricing = computeBookingTotal({
     service,
     citySlug: data.citySlug,
     tier: data.packageTier,
     addonKeys: data.addonKeys,
   });
-
-  const advanceAmount =
-    data.paymentOption === "100" ? pricing.total : Math.round(pricing.total / 2);
+  const subtotalBeforeDiscount = preDiscountPricing.tierPrice + preDiscountPricing.addOnsTotal;
 
   const blockMinutes = getBlockMinutes(service, data.packageTier);
   const needsSlot = service.schedulingMode === "slot";
@@ -96,6 +95,30 @@ export async function POST(request: Request) {
         }
       }
 
+      let appliedCoupon: { percentOff: number | null; amountOff: number | null } | null = null;
+      let couponCode: string | null = null;
+
+      if (data.couponCode) {
+        const coupon = await tx.coupon.findUnique({ where: { code: data.couponCode.toUpperCase() } });
+        const result = checkCoupon(coupon, subtotalBeforeDiscount);
+        if (!result.valid) {
+          throw new Error(`COUPON_INVALID:${result.error}`);
+        }
+        appliedCoupon = result.coupon;
+        couponCode = result.coupon.code;
+        await tx.coupon.update({ where: { id: result.coupon.id }, data: { usedCount: { increment: 1 } } });
+      }
+
+      const pricing = computeBookingTotal({
+        service,
+        citySlug: data.citySlug,
+        tier: data.packageTier,
+        addonKeys: data.addonKeys,
+        coupon: appliedCoupon,
+      });
+      const advanceAmount =
+        data.paymentOption === "100" ? pricing.total : Math.round(pricing.total / 2);
+
       let bookingRef = generateBookingRef();
       for (let attempt = 0; attempt < 5; attempt++) {
         const existing = await tx.booking.findUnique({ where: { bookingRef } });
@@ -132,6 +155,7 @@ export async function POST(request: Request) {
           gstAmount: pricing.gst,
           totalAmount: pricing.total,
           advanceAmount,
+          couponCode,
         },
       });
     });
@@ -158,6 +182,12 @@ export async function POST(request: Request) {
     if (err instanceof Error && err.message === "SLOT_UNAVAILABLE") {
       return NextResponse.json(
         { error: "This time slot was just booked. Please pick another start time." },
+        { status: 409 },
+      );
+    }
+    if (err instanceof Error && err.message.startsWith("COUPON_INVALID:")) {
+      return NextResponse.json(
+        { error: `${err.message.slice("COUPON_INVALID:".length)}. Please remove it and try again.` },
         { status: 409 },
       );
     }

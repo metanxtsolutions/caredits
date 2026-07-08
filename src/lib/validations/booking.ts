@@ -26,6 +26,7 @@ export const bookingSchema = z.object({
   vehicleModel: z.string().min(1, "Please enter the vehicle model"),
   notes: z.string().optional(),
   paymentOption: z.enum(["50", "100"]),
+  couponCode: z.string().nullable().optional(),
 });
 
 export type BookingInput = z.infer<typeof bookingSchema>;

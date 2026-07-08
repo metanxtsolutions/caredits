@@ -56,4 +56,13 @@ export const brandsWorkedWith = [
   "Metro Dealership Network",
   "Velocity Bikes",
   "Kolkata Car Club",
+  "MG",
+  "BYD",
+  "Jaguar Land Rover",
+  "Audi",
+  "BMW",
+  "MINI",
+  "Mercedes-Benz",
+  "Porsche",
+  "Volvo",
 ];

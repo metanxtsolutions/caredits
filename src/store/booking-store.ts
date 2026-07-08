@@ -3,6 +3,11 @@ import type { PackageTier } from "@/lib/data/services";
 
 export type LocationType = "DEALERSHIP" | "HOME" | "OUTDOOR" | "EVENT_VENUE" | "CUSTOM";
 export type AddressType = "HOME" | "WORK" | "OTHER";
+export type AppliedCoupon = {
+  code: string;
+  percentOff: number | null;
+  amountOff: number | null;
+};
 
 export const TOTAL_STEPS = 6;
 
@@ -40,6 +45,7 @@ type BookingState = {
   vehicleModel: string;
   notes: string;
   paymentOption: "50" | "100";
+  appliedCoupon: AppliedCoupon | null;
 
   bookingId: string | null;
   bookingRef: string | null;
@@ -82,6 +88,7 @@ const initialState = {
   vehicleModel: "",
   notes: "",
   paymentOption: "50" as const,
+  appliedCoupon: null as AppliedCoupon | null,
   bookingId: null,
   bookingRef: null,
 };

@@ -34,17 +34,60 @@ export function StepReviewPay({ onEdit }: { onEdit: (step: number) => void }) {
   const [method, setMethod] = useState("razorpay");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [couponInput, setCouponInput] = useState("");
+  const [couponLoading, setCouponLoading] = useState(false);
+  const [couponError, setCouponError] = useState<string | null>(null);
 
   const service = s.serviceSlug ? getServiceBySlug(s.serviceSlug) : undefined;
   const hasPackages = service?.premiumAddOn !== null;
 
   const pricing =
     service && s.citySlug
-      ? computeBookingTotal({ service, citySlug: s.citySlug, tier: s.packageTier, addonKeys: s.addonKeys })
+      ? computeBookingTotal({
+          service,
+          citySlug: s.citySlug,
+          tier: s.packageTier,
+          addonKeys: s.addonKeys,
+          coupon: s.appliedCoupon,
+        })
       : null;
 
   const totalAmount = pricing?.total ?? 0;
   const advanceAmount = s.paymentOption === "100" ? totalAmount : Math.round(totalAmount / 2);
+
+  async function handleApplyCoupon() {
+    if (!couponInput.trim() || !pricing) return;
+    setCouponError(null);
+    setCouponLoading(true);
+    try {
+      const subtotal = pricing.tierPrice + pricing.addOnsTotal;
+      const res = await fetch("/api/coupons/validate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code: couponInput.trim(), subtotal }),
+      });
+      const result = await res.json();
+      if (!result.valid) {
+        setCouponError(result.error || "Invalid coupon code");
+        return;
+      }
+      s.set("appliedCoupon", {
+        code: result.code,
+        percentOff: result.percentOff,
+        amountOff: result.amountOff,
+      });
+      setCouponInput("");
+    } catch {
+      setCouponError("Something went wrong. Please try again.");
+    } finally {
+      setCouponLoading(false);
+    }
+  }
+
+  function handleRemoveCoupon() {
+    s.set("appliedCoupon", null);
+    setCouponError(null);
+  }
 
   const addressValue =
     s.locationType === "DEALERSHIP"
@@ -119,6 +162,7 @@ export function StepReviewPay({ onEdit }: { onEdit: (step: number) => void }) {
           vehicleBrand: s.vehicleBrand,
           vehicleModel: s.vehicleModel,
           notes: s.notes,
+          couponCode: s.appliedCoupon?.code ?? null,
           paymentOption: s.paymentOption,
         }),
       });
@@ -163,6 +207,37 @@ export function StepReviewPay({ onEdit }: { onEdit: (step: number) => void }) {
         ))}
       </div>
 
+      <div className="mt-6">
+        <p className="font-label text-xs font-semibold uppercase tracked text-grey">Have a coupon code?</p>
+        {s.appliedCoupon ? (
+          <div className="mt-2 flex items-center justify-between bg-grey-light px-4 py-3">
+            <span className="text-sm text-ink">
+              <span className="font-semibold">{s.appliedCoupon.code}</span> applied
+            </span>
+            <button
+              onClick={handleRemoveCoupon}
+              className="font-label text-xs font-semibold uppercase tracked-tight text-accent hover:underline"
+            >
+              Remove
+            </button>
+          </div>
+        ) : (
+          <div className="mt-2 flex gap-2">
+            <input
+              value={couponInput}
+              onChange={(e) => setCouponInput(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && handleApplyCoupon()}
+              placeholder="Enter code"
+              className="min-w-0 flex-1 border-2 border-border px-4 py-2.5 text-sm uppercase focus:border-ink focus:outline-none"
+            />
+            <Button onClick={handleApplyCoupon} disabled={couponLoading || !couponInput.trim()} variant="outline">
+              {couponLoading ? "Applying..." : "Apply"}
+            </Button>
+          </div>
+        )}
+        {couponError && <p className="mt-2 text-sm text-accent">{couponError}</p>}
+      </div>
+
       {pricing && (
         <div className="mt-6 bg-grey-light p-6">
           <div className="space-y-2 text-sm">
@@ -174,6 +249,12 @@ export function StepReviewPay({ onEdit }: { onEdit: (step: number) => void }) {
               <div className="flex justify-between">
                 <span className="text-grey">Add-ons</span>
                 <span className="text-ink">₹{pricing.addOnsTotal.toLocaleString("en-IN")}</span>
+              </div>
+            )}
+            {pricing.discount > 0 && (
+              <div className="flex justify-between">
+                <span className="text-grey">Discount{s.appliedCoupon ? ` (${s.appliedCoupon.code})` : ""}</span>
+                <span className="text-ink">-₹{pricing.discount.toLocaleString("en-IN")}</span>
               </div>
             )}
             <div className="flex justify-between">

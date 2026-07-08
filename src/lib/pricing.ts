@@ -23,24 +23,38 @@ export function getAddOnsTotal(addonKeys: string[]): number {
   return addonKeys.reduce((sum, key) => sum + (getAddOnByKey(key)?.price ?? 0), 0);
 }
 
+export type CouponDiscount = { percentOff: number | null; amountOff: number | null };
+
+export function computeDiscount(preDiscountSubtotal: number, coupon?: CouponDiscount | null): number {
+  if (!coupon) return 0;
+  const raw = coupon.percentOff
+    ? Math.round(preDiscountSubtotal * (coupon.percentOff / 100))
+    : coupon.amountOff ?? 0;
+  return Math.min(raw, preDiscountSubtotal);
+}
+
 export function computeBookingTotal({
   service,
   citySlug,
   tier,
   addonKeys,
+  coupon,
 }: {
   service: Service;
   citySlug: string;
   tier: PackageTier;
   addonKeys: string[];
+  coupon?: CouponDiscount | null;
 }) {
   const basePrice = getBasePrice(service, citySlug);
   const tierPrice = getTierPrice(service, citySlug, tier);
   const addOnsTotal = getAddOnsTotal(addonKeys);
-  const subtotal = tierPrice + addOnsTotal;
+  const preDiscountSubtotal = tierPrice + addOnsTotal;
+  const discount = computeDiscount(preDiscountSubtotal, coupon);
+  const subtotal = preDiscountSubtotal - discount;
   const gst = Math.round(subtotal * GST_RATE);
   const total = subtotal + gst;
   const isOutstation = !(citySlug in service.pricingByCity);
 
-  return { basePrice, tierPrice, addOnsTotal, subtotal, gst, total, isOutstation };
+  return { basePrice, tierPrice, addOnsTotal, discount, subtotal, gst, total, isOutstation };
 }
